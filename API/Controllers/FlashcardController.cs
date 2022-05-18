@@ -3,6 +3,7 @@ using API.Data.DTOs;
 using API.Data.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
@@ -43,6 +44,46 @@ namespace API.Controllers
                     ErrorMessage = ex.Message
                 });
             }
+        }
+
+        [HttpGet("get")]
+        public async Task<ActionResult<FlashcardDto>> Get()
+        {
+            var flashcards = await _context.Flashcards.ToListAsync();
+
+            if (flashcards.Count == 0)
+            {
+                return NotFound();
+            }
+
+            return new OkObjectResult(new
+            {
+                Data = flashcards.Select(card => new
+                {
+                    TopContent = card.TopContent,
+                    BottomContent = card.BottomContent
+                })
+            });
+        }
+
+        [HttpGet("get/{id}")]
+        public async Task<ActionResult<FlashcardDto>> GetById(int id)
+        {
+            var flashcards = await _context.Flashcards.FindAsync(id);
+
+            if (flashcards is null)
+            {
+                return NotFound();
+            }
+
+            return new OkObjectResult(new
+            {
+                Data = new
+                {
+                    TopContent = flashcards.TopContent,
+                    BottomContent = flashcards.BottomContent
+                }
+            });
         }
     }
 }
