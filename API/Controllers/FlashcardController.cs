@@ -47,7 +47,7 @@ namespace API.Controllers
         }
 
         [HttpGet("get")]
-        public async Task<ActionResult<FlashcardDto>> Get()
+        public async Task<ActionResult<IEnumerable<Flashcard>>> Get()
         {
             var flashcards = await _context.Flashcards.ToListAsync();
 
@@ -56,14 +56,7 @@ namespace API.Controllers
                 return NotFound();
             }
 
-            return new OkObjectResult(new
-            {
-                Data = flashcards.Select(card => new
-                {
-                    TopContent = card.TopContent,
-                    BottomContent = card.BottomContent
-                })
-            });
+            return flashcards;
         }
 
         [HttpGet("get/{id}")]

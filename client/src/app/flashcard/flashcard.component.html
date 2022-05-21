@@ -1,8 +1,12 @@
-<div id="Flashcard">
-  <div id="Content">
-      <p>Przykładowy tekst w języku polskim</p>
-  </div>
-  <div id="Content">
-      <p>Example text in english language</p>
-  </div>
-</div>
+<ul class="list-group">
+  <li *ngFor="let flashcard of flashcards" class="list-group-item">
+    <div id="Flashcard">
+      <div id="Content">
+          <p>{{ flashcard.topContent }}</p>
+      </div>
+      <div id="Content">
+        <p>{{ flashcard.bottomContent }}</p>
+      </div>
+    </div>
+  </li>
+</ul>
