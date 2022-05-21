@@ -1,0 +1,14 @@
+#Flashcard
+{
+  background-color:cornflowerblue;
+  border-radius: 2%;
+  padding: 5%;
+}
+
+#Content
+{
+  background-color:aliceblue;
+  border-radius: 3%;
+  padding: 2%;
+  margin: 20px;
+}
