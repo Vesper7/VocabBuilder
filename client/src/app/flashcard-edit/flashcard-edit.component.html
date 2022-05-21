@@ -1,0 +1,11 @@
+<form (ngSubmit)="saveFlashcard()">
+  <div id="Flashcard">
+    <div id="Content">
+        <input name="topContent" type="text" [(ngModel)]="flashcard.TopContent">
+    </div>
+    <div id="Content">
+      <input name="bottomContent" type="text" [(ngModel)]="flashcard.BottomContent">
+    </div>
+    <button type="submit">Add</button>
+  </div>
+</form>

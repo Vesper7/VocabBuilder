@@ -21,6 +21,17 @@ namespace API.Controllers
         {
             try
             {
+                if (flashcardDto == null 
+                    || flashcardDto.TopContent == string.Empty 
+                    || flashcardDto.BottomContent == string.Empty)
+                {
+                    return new OkObjectResult(new
+                    {
+                        Result = false,
+                        ErrorMessage = "Brak danych do zapisania"
+                    });
+                }
+
                 var flashcard = new Flashcard
                 {
                     BottomContent = flashcardDto.BottomContent,
