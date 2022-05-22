@@ -17,7 +17,7 @@ namespace API.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> Create(FlashcardDto flashcardDto)
+        public async Task<IActionResult> Create([FromBody] FlashcardDto flashcardDto)
         {
             try
             {

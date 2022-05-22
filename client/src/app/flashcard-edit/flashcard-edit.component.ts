@@ -16,7 +16,7 @@ export class FlashcardEditComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  saveFlashcard(): void {
+  saveFlashcard() {
     this.flashcardService.saveFlashcard(this.flashcard).subscribe(response => {
       console.log(response);
       this.flashcard = {TopContent: '', BottomContent: ''};
