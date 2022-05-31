@@ -8,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AppComponent implements OnInit {
   title = 'VocaBilder';
-  active = 'middle';
+  active = 'bottom';
 
   constructor(private http: HttpClient) {}
 

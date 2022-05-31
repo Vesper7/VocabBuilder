@@ -12,7 +12,10 @@ export class FlashcardTestComponent implements OnInit {
 
   flashCardToCheck: FlashcardDto = { TopContent: '', BottomContent: '' };
   flashcards: FlashcardDto[] = [];
-  flashcardsForTest: any[] = []; /* : any = { TopContent: '', BottomContent: '', IsCorrect: false, NeedRepetition: false };*/
+  flashcardsForTest: any[] = []; 
+  isLastAnswerCorrect : any = false;
+  isTestStarted : any = false;
+  correctAnswer : string = '';
 
   constructor(private http: HttpClient) { }
 
@@ -31,8 +34,18 @@ export class FlashcardTestComponent implements OnInit {
           NeedRepetition: false
         });
       });
+
+      this.flashCardToCheck.TopContent = this.flashcardsForTest[0].TopContent;
+      this.correctAnswer = this.flashcardsForTest[0].BottomContent;
+
     }, error => {
       console.log(error);
     })
+  }
+
+  check() : void {
+    this.isTestStarted = true;
+
+    this.isLastAnswerCorrect = this.flashCardToCheck.BottomContent === this.correctAnswer;
   }
 }
