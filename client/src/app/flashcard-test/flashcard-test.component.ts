@@ -11,7 +11,7 @@ import { Observable, throwError } from 'rxjs';
 export class FlashcardTestComponent implements OnInit {
 
   flashCardToCheck: FlashcardDto = { TopContent: '', BottomContent: '' };
-  flashcards: FlashcardDto[] = [];
+  flashcards: any[] = [];
   flashcardsForTest: any[] = []; 
   isLastAnswerCorrect : any = false;
   isTestStarted : any = false;
@@ -25,11 +25,11 @@ export class FlashcardTestComponent implements OnInit {
 
   loadFlashCards() : void {
     this.http.get('https://localhost:7290/get').subscribe(response => {
-      this.flashcards = response as FlashcardDto[];
+      this.flashcards = response as any[];
       this.flashcards.forEach(flashcard => {
         this.flashcardsForTest.push({
-          TopContent: flashcard.TopContent, 
-          BottomContent: flashcard.BottomContent, 
+          TopContent: flashcard.topContent, 
+          BottomContent: flashcard.bottomContent, 
           IsCorrect: false, 
           NeedRepetition: false
         });
