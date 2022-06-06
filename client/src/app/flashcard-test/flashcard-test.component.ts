@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FlashcardDto } from '../interfaces/flashcard';
 import { HttpClient } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-flashcard-test',
@@ -14,8 +13,10 @@ export class FlashcardTestComponent implements OnInit {
   flashcards: any[] = [];
   flashcardsForTest: any[] = []; 
   isLastAnswerCorrect : any = false;
-  isTestStarted : any = false;
+  showResultForLastQuestion : any = false;
   correctAnswer : string = '';
+  currentIdx : any = 0;
+  isTestFinished : any = false;
 
   constructor(private http: HttpClient) { }
 
@@ -30,13 +31,12 @@ export class FlashcardTestComponent implements OnInit {
         this.flashcardsForTest.push({
           TopContent: flashcard.topContent, 
           BottomContent: flashcard.bottomContent, 
-          IsCorrect: false, 
-          NeedRepetition: false
+          IsCorrect: false
         });
       });
 
-      this.flashCardToCheck.TopContent = this.flashcardsForTest[0].TopContent;
-      this.correctAnswer = this.flashcardsForTest[0].BottomContent;
+      this.flashCardToCheck.TopContent = this.flashcardsForTest[this.currentIdx].TopContent;
+      this.correctAnswer = this.flashcardsForTest[this.currentIdx].BottomContent;
 
     }, error => {
       console.log(error);
@@ -44,8 +44,23 @@ export class FlashcardTestComponent implements OnInit {
   }
 
   check() : void {
-    this.isTestStarted = true;
-
+    this.showResultForLastQuestion = true;
     this.isLastAnswerCorrect = this.flashCardToCheck.BottomContent === this.correctAnswer;
+    new Promise(timeout => setTimeout(timeout, 1500));
+    
+    this.flashcardsForTest[this.currentIdx] = {
+      TopContent: this.flashcardsForTest[this.currentIdx].TopContent, 
+      BottomContent: this.flashcardsForTest[this.currentIdx].BottomContent, 
+      IsCorrect: this.isLastAnswerCorrect
+    }
+
+    const nextflashcard = this.flashcardsForTest.find( f => f.IsCorrect === false);
+    this.currentIdx = this.flashcardsForTest.findIndex( f => f === nextflashcard);
+
+    this.flashCardToCheck.TopContent = nextflashcard.TopContent;
+    this.correctAnswer = nextflashcard.BottomContent;
+
+    this.showResultForLastQuestion = false;
+    this.flashCardToCheck.BottomContent = '';
   }
 }
