@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FlashcardDto } from '../interfaces/flashcard';
+import { TestFlashcardDto } from '../interfaces/flashcard';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
@@ -9,58 +9,114 @@ import { HttpClient } from '@angular/common/http';
 })
 export class FlashcardTestComponent implements OnInit {
 
-  flashCardToCheck: FlashcardDto = { TopContent: '', BottomContent: '' };
-  flashcards: any[] = [];
-  flashcardsForTest: any[] = []; 
-  isLastAnswerCorrect : any = false;
-  showResultForLastQuestion : any = false;
-  correctAnswer : string = '';
-  currentIdx : any = 0;
-  isTestFinished : any = false;
+  flashcard : TestFlashcardDto = {  
+    topContent: '', bottomContent: '', correctAnswer: '',
+    isAnswerCorrect: false,
+    attemptNum: 0
+  }
+
+  flashcards : TestFlashcardDto[] = [];
+  flashcardIdx : number = -1;
+  isTestFinished : boolean = false;
+  isLastAnswerCorrect : boolean = false;
 
   constructor(private http: HttpClient) { }
 
   ngOnInit(): void {
-    this.loadFlashCards();
+    this.loadFlashCardsFromServer();
   }
 
-  loadFlashCards() : void {
+  loadFlashCardsFromServer() : void {
     this.http.get('https://localhost:7290/get').subscribe(response => {
-      this.flashcards = response as any[];
-      this.flashcards.forEach(flashcard => {
-        this.flashcardsForTest.push({
-          TopContent: flashcard.topContent, 
-          BottomContent: flashcard.bottomContent, 
-          IsCorrect: false
+      const flashcardsFromServer = response as any[];
+
+      flashcardsFromServer.forEach(card => {
+        this.flashcards.push({
+          topContent : card.topContent,
+          bottomContent: '',
+          correctAnswer: card.bottomContent,
+          isAnswerCorrect: false,
+          attemptNum: 0
         });
       });
 
-      this.flashCardToCheck.TopContent = this.flashcardsForTest[this.currentIdx].TopContent;
-      this.correctAnswer = this.flashcardsForTest[this.currentIdx].BottomContent;
+      this.loadFlashcard();
 
     }, error => {
       console.log(error);
     })
   }
 
-  check() : void {
-    this.showResultForLastQuestion = true;
-    this.isLastAnswerCorrect = this.flashCardToCheck.BottomContent === this.correctAnswer;
-    new Promise(timeout => setTimeout(timeout, 1500));
-    
-    this.flashcardsForTest[this.currentIdx] = {
-      TopContent: this.flashcardsForTest[this.currentIdx].TopContent, 
-      BottomContent: this.flashcardsForTest[this.currentIdx].BottomContent, 
-      IsCorrect: this.isLastAnswerCorrect
+  loadFlashcard() {
+    if (this.flashcards && this.flashcards.length != 0 && !this.isTestFinished)
+    {
+      this.flashcardIdx = this.flashcards.findIndex(card => card.isAnswerCorrect === false || card.attemptNum != 0);
+
+      if (this.flashcardIdx === -1)
+      {
+        this.isTestFinished = true;
+        return;
+      }
+
+      this.flashcard = this.flashcards[this.flashcardIdx];
     }
+  }
 
-    const nextflashcard = this.flashcardsForTest.find( f => f.IsCorrect === false);
-    this.currentIdx = this.flashcardsForTest.findIndex( f => f === nextflashcard);
+  getRadomFlashcardIndexForTest() {
+    throw new Error('Method not implemented.');
+  }
 
-    this.flashCardToCheck.TopContent = nextflashcard.TopContent;
-    this.correctAnswer = nextflashcard.BottomContent;
+  check() : void {
 
-    this.showResultForLastQuestion = false;
-    this.flashCardToCheck.BottomContent = '';
+    if (!this.isTestFinished)
+    {
+      this.isLastAnswerCorrect = this.isAnswerCorrect();
+      this.showResult();
+      this.updateCard();
+      this.loadFlashcard();
+    }
+    else
+    {
+      if (this.isTestRestartOptionActivated())
+      {
+        this.restartFlashcards();
+      }
+    }
+  }
+
+  restartFlashcards() {
+    throw new Error('Method not implemented.');
+  }
+
+  isTestRestartOptionActivated() : boolean{
+    return false;
+  }
+
+  updateCard() {
+    if (this.isLastAnswerCorrect)
+    {
+      this.flashcard.isAnswerCorrect = true;
+      this.flashcard.bottomContent = '';
+      this.flashcard.attemptNum--;
+
+      if (this.flashcard.attemptNum < 0)
+      {
+        this.flashcard.attemptNum = 0;
+      }
+    }
+    else
+    {
+      this.flashcard.isAnswerCorrect = false;
+      this.flashcard.attemptNum = 2;
+    }
+    this.flashcard.bottomContent = '';
+  }
+
+  showResult() {
+    return new Promise(resolve => setTimeout(resolve, 1500));
+  }
+  
+  isAnswerCorrect() {
+    return this.flashcard.bottomContent.toLowerCase() === this.flashcard.correctAnswer.toLowerCase();
   }
 }
