@@ -9,7 +9,7 @@ import { FlashcardService } from '../Services/flashcard.service';
 })
 export class FlashcardEditComponent implements OnInit {
 
-  flashcard : FlashcardDto = {TopContent: '', BottomContent: ''};
+  flashcard : FlashcardDto = {topContent: '', bottomContent: ''};
 
   constructor(private flashcardService: FlashcardService) { }
 
@@ -19,7 +19,7 @@ export class FlashcardEditComponent implements OnInit {
   saveFlashcard() {
     this.flashcardService.saveFlashcard(this.flashcard).subscribe(response => {
       console.log(response);
-      this.flashcard = {TopContent: '', BottomContent: ''};
+      this.flashcard = {topContent: '', bottomContent: ''};
     }, error => {
       console.log(error);
     })
